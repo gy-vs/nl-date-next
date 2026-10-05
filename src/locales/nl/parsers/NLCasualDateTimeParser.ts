@@ -3,6 +3,7 @@ import { ParsingComponents, ParsingResult } from "../../../results";
 import { AbstractParserWithWordBoundaryChecking } from "../../../common/parsers/AbstractParserWithWordBoundary";
 import { Meridiem } from "../../../types";
 import { assignSimilarDate, implySimilarTime } from "../../../utils/dates";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 
 /*
  * Find combined words
@@ -56,19 +57,23 @@ export default class NLCasualDateTimeParser extends AbstractParserWithWordBounda
 
         switch (timeText) {
             case "ochtend":
+                component.addTag(IMPLIED_TIME_OF_DAY_TAG);
                 component.imply("meridiem", Meridiem.AM);
                 component.imply("hour", 6);
                 break;
             case "middag":
+                component.addTag(IMPLIED_TIME_OF_DAY_TAG);
                 component.imply("meridiem", Meridiem.AM);
                 component.imply("hour", 12);
                 break;
             case "namiddag":
+                component.addTag(IMPLIED_TIME_OF_DAY_TAG);
                 component.imply("meridiem", Meridiem.PM);
                 component.imply("hour", 15);
                 break;
 
             case "avond":
+                component.addTag(IMPLIED_TIME_OF_DAY_TAG);
                 component.imply("meridiem", Meridiem.PM);
                 component.imply("hour", 20);
                 break;

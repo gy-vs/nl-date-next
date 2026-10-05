@@ -2,6 +2,7 @@ import { ParsingContext } from "../../../chrono";
 import { Meridiem } from "../../../index";
 import { AbstractParserWithWordBoundaryChecking } from "../../../common/parsers/AbstractParserWithWordBoundary";
 import { assignSimilarDate, implySimilarTime } from "../../../utils/dates";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 
 const PATTERN = /(?:questo|questa)?\s{0,3}(mattina|pomeriggio|sera|notte|mezzanotte|mezzogiorno)(?=\W|$)/i;
 
@@ -13,6 +14,7 @@ export default class ITCasualTimeParser extends AbstractParserWithWordBoundaryCh
     innerExtract(context: ParsingContext, match: RegExpMatchArray) {
         const targetDate = context.refDate;
         const component = context.createParsingComponents();
+        component.addTag(IMPLIED_TIME_OF_DAY_TAG);
 
         switch (match[1].toLowerCase()) {
             case "pomeriggio":

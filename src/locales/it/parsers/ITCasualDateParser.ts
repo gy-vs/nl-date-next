@@ -3,6 +3,7 @@ import { ParsingComponents, ParsingResult } from "../../../results";
 import { AbstractParserWithWordBoundaryChecking } from "../../../common/parsers/AbstractParserWithWordBoundary";
 import { assignSimilarDate } from "../../../utils/dates";
 import * as references from "../../../common/casualReferences";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 
 const PATTERN = /(ora|oggi|stasera|questa sera|domani|dmn|ieri\s*sera)(?=\W|$)/i;
 
@@ -44,6 +45,7 @@ export default class ITCasualDateParser extends AbstractParserWithWordBoundaryCh
 
                     assignSimilarDate(component, targetDate);
                     component.imply("hour", 0);
+                    component.addTag(IMPLIED_TIME_OF_DAY_TAG);
                 }
 
                 break;

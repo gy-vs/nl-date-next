@@ -148,6 +148,12 @@ export class ParsingContext implements DebugHandler {
     readonly reference: ReferenceWithTimezone;
 
     /**
+     * The normalized default time from {@link ParsingOption.defaultTime}, or `null`
+     * when the option is not provided.
+     */
+    readonly defaultTime: { hour: number; minute: number } | null;
+
+    /**
      * @deprecated. Use `reference.instant` instead.
      */
     readonly refDate: Date;
@@ -155,8 +161,42 @@ export class ParsingContext implements DebugHandler {
     constructor(text: string, refDate?: ParsingReference | Date, option?: ParsingOption) {
         this.text = text;
         this.option = option ?? {};
+        this.defaultTime = ParsingContext.normalizeDefaultTime(this.option.defaultTime);
         this.reference = ReferenceWithTimezone.fromInput(refDate, this.option.timezones);
         this.refDate = this.reference.instant;
+    }
+
+    private static normalizeDefaultTime(
+        defaultTime: ParsingOption["defaultTime"]
+    ): { hour: number; minute: number } | null {
+        if (defaultTime === undefined) {
+            return null;
+        }
+
+        if (
+            typeof defaultTime !== "object" ||
+            defaultTime === null ||
+            typeof (defaultTime as { hour?: unknown }).hour !== "number"
+        ) {
+            throw new Error(
+                `Invalid defaultTime option: expected an object with an integer 'hour' (0-23), but got ${JSON.stringify(
+                    defaultTime
+                )}`
+            );
+        }
+
+        const hour = defaultTime.hour;
+        const minute = defaultTime.minute ?? 0;
+        if (!Number.isInteger(hour) || hour < 0 || hour > 23) {
+            throw new Error(`Invalid defaultTime option: 'hour' must be an integer between 0 and 23, but got ${hour}`);
+        }
+        if (!Number.isInteger(minute) || minute < 0 || minute > 59) {
+            throw new Error(
+                `Invalid defaultTime option: 'minute' must be an integer between 0 and 59, but got ${minute}`
+            );
+        }
+
+        return { hour, minute };
     }
 
     createParsingComponents(components?: { [c in Component]?: number } | ParsingComponents): ParsingComponents {

@@ -2,6 +2,7 @@ import { ParsingContext } from "../../../chrono";
 import { Meridiem } from "../../../types";
 import { AbstractParserWithWordBoundaryChecking } from "../../../common/parsers/AbstractParserWithWordBoundary";
 import { assignSimilarDate, implySimilarTime } from "../../../utils/dates";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 
 export default class PTCasualTimeParser extends AbstractParserWithWordBoundaryChecking {
     innerPattern() {
@@ -11,6 +12,7 @@ export default class PTCasualTimeParser extends AbstractParserWithWordBoundaryCh
     innerExtract(context: ParsingContext, match: RegExpMatchArray) {
         const targetDate = context.refDate;
         const component = context.createParsingComponents();
+        component.addTag(IMPLIED_TIME_OF_DAY_TAG);
         switch (match[1].toLowerCase()) {
             case "tarde":
                 component.imply("meridiem", Meridiem.PM);

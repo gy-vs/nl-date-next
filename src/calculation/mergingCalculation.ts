@@ -1,6 +1,7 @@
 import { ParsingComponents, ParsingResult } from "../results";
 import { Meridiem } from "../types";
 import { assignSimilarDate, implySimilarDate } from "../utils/dates";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../utils/tags";
 
 export function mergeDateTimeResult(dateResult: ParsingResult, timeResult: ParsingResult): ParsingResult {
     const result = dateResult.clone();
@@ -68,6 +69,10 @@ export function mergeDateTimeComponent(
         dateTimeComponent.assign("meridiem", timeComponent.get("meridiem"));
     } else if (timeComponent.get("meridiem") != null && dateTimeComponent.get("meridiem") == null) {
         dateTimeComponent.imply("meridiem", timeComponent.get("meridiem"));
+    }
+
+    if (!timeComponent.isCertain("hour") && timeComponent.tags().has(IMPLIED_TIME_OF_DAY_TAG)) {
+        dateTimeComponent.addTag(IMPLIED_TIME_OF_DAY_TAG);
     }
 
     if (dateTimeComponent.get("meridiem") == Meridiem.PM && dateTimeComponent.get("hour") < 12) {

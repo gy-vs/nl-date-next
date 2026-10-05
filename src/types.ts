@@ -8,6 +8,18 @@ export interface ParsingOption {
     forwardDate?: boolean;
 
     /**
+     * The default time (hour and minute) to use when the input mentions a date but
+     * neither a clock time nor a time-of-day word (e.g. "morning", "evening", or "noon").
+     *
+     * For example, with `{ hour: 18 }`, "March 5" resolves to 18:00 of that day,
+     * while "March 5 at 3pm" or "tomorrow morning" are unaffected.
+     *
+     * `hour` must be an integer from 0 to 23. `minute` is optional (defaults to 0)
+     * and must be an integer from 0 to 59. Invalid values make `parse`/`parseDate` throw.
+     */
+    defaultTime?: { hour: number; minute?: number };
+
+    /**
      * Additional timezone keywords for the parsers to recognize.
      * Any value provided will override the default handling of that value.
      */

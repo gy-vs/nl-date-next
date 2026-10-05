@@ -3,6 +3,7 @@ import { ParsingComponents, ParsingResult } from "../../../results";
 import { AbstractParserWithWordBoundaryChecking } from "../../../common/parsers/AbstractParserWithWordBoundary";
 import { assignSimilarDate, implySimilarTime } from "../../../utils/dates";
 import * as references from "../../../common/casualReferences";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 
 const PATTERN = new RegExp(
     `(nu|idag|imorgon|övermorgon|igår|förrgår|i\\s*förrgår)` +
@@ -56,6 +57,10 @@ export default class SVCasualDateParser extends AbstractParserWithWordBoundaryCh
                 assignSimilarDate(component, twoDaysAgo);
                 implySimilarTime(component, twoDaysAgo);
                 break;
+        }
+
+        if (timeKeyword) {
+            component.addTag(IMPLIED_TIME_OF_DAY_TAG);
         }
 
         switch (timeKeyword) {

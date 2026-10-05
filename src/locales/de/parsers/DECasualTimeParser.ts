@@ -3,6 +3,7 @@ import { ParsingComponents, ParsingResult } from "../../../results";
 import { Meridiem } from "../../../types";
 import { AbstractParserWithWordBoundaryChecking } from "../../../common/parsers/AbstractParserWithWordBoundary";
 import { implySimilarTime } from "../../../utils/dates";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 
 export default class DECasualTimeParser extends AbstractParserWithWordBoundaryChecking {
     innerPattern(context: ParsingContext): RegExp {
@@ -18,6 +19,7 @@ export default class DECasualTimeParser extends AbstractParserWithWordBoundaryCh
     }
 
     static extractTimeComponents(component: ParsingComponents, timeKeywordPattern: string): ParsingComponents {
+        component.addTag(IMPLIED_TIME_OF_DAY_TAG);
         switch (timeKeywordPattern) {
             case "morgen":
                 component.imply("hour", 6);

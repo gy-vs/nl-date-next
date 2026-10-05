@@ -2,6 +2,7 @@ import { ParsingContext } from "../../../chrono";
 import { ParsingComponents, ParsingResult } from "../../../results";
 import { AbstractParserWithWordBoundaryChecking } from "../../../common/parsers/AbstractParserWithWordBoundary";
 import { assignSimilarDate } from "../../../utils/dates";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 import * as references from "../../../common/casualReferences";
 
 const PATTERN = /(now|today|tonight|tomorrow|overmorrow|tmr|tmrw|yesterday|last\s*night)(?=\W|$)/i;
@@ -53,6 +54,7 @@ export default class ENCasualDateParser extends AbstractParserWithWordBoundaryCh
 
                     assignSimilarDate(component, targetDate);
                     component.imply("hour", 0);
+                    component.addTag(IMPLIED_TIME_OF_DAY_TAG);
                 }
                 break;
         }

@@ -2,6 +2,7 @@ import { ParsingContext } from "../../../chrono";
 import * as references from "../../../common/casualReferences";
 import { assignSimilarDate } from "../../../utils/dates";
 import { AbstractParserWithLeftRightBoundaryChecking } from "./AbstractParserWithWordBoundaryChecking";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 
 export default class UKCasualTimeParser extends AbstractParserWithLeftRightBoundaryChecking {
     innerPatternString(context: ParsingContext): string {
@@ -37,6 +38,7 @@ export default class UKCasualTimeParser extends AbstractParserWithLeftRightBound
             nextDay.setDate(nextDay.getDate() + daysToAdd);
             assignSimilarDate(component, nextDay);
             component.imply("hour", 1);
+            component.addTag(IMPLIED_TIME_OF_DAY_TAG);
         }
         if (lowerText.match(/цієї\s*ночі/)) {
             return references.midnight(context.reference);

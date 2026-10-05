@@ -1,6 +1,7 @@
 import { ParsingContext } from "../../../../chrono";
 import { AbstractParserWithWordBoundaryChecking } from "../../../../common/parsers/AbstractParserWithWordBoundary";
 import { ParsingComponents, ParsingResult } from "../../../../results";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../../utils/tags";
 
 const NOW_GROUP = 1;
 const DAY_GROUP_1 = 2;
@@ -30,6 +31,7 @@ export default class ZHHansCasualDateParser extends AbstractParserWithWordBounda
         let date = new Date(refDate.getTime());
 
         if (match[NOW_GROUP]) {
+            result.start.addTag(IMPLIED_TIME_OF_DAY_TAG);
             result.start.imply("hour", refDate.getHours());
             result.start.imply("minute", refDate.getMinutes());
             result.start.imply("second", refDate.getSeconds());
@@ -37,6 +39,7 @@ export default class ZHHansCasualDateParser extends AbstractParserWithWordBounda
         } else if (match[DAY_GROUP_1]) {
             const day1 = match[DAY_GROUP_1];
             const time1 = match[TIME_GROUP_1];
+            result.start.addTag(IMPLIED_TIME_OF_DAY_TAG);
 
             if (day1 == "明") {
                 // Check not "Tomorrow" on late night
@@ -64,6 +67,7 @@ export default class ZHHansCasualDateParser extends AbstractParserWithWordBounda
         } else if (match[TIME_GROUP_2]) {
             const timeString2 = match[TIME_GROUP_2];
             const time2 = timeString2[0];
+            result.start.addTag(IMPLIED_TIME_OF_DAY_TAG);
             if (time2 == "早" || time2 == "上") {
                 result.start.imply("hour", 6);
             } else if (time2 == "下") {
@@ -100,6 +104,7 @@ export default class ZHHansCasualDateParser extends AbstractParserWithWordBounda
 
             const timeString3 = match[TIME_GROUP_3];
             if (timeString3) {
+                result.start.addTag(IMPLIED_TIME_OF_DAY_TAG);
                 const time3 = timeString3[0];
                 if (time3 == "早" || time3 == "上") {
                     result.start.imply("hour", 6);

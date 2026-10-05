@@ -5,6 +5,7 @@ import { assignSimilarDate, implySimilarTime } from "../../../utils/dates";
 import DECasualTimeParser from "./DECasualTimeParser";
 import * as references from "../../../common/casualReferences";
 import { addDuration } from "../../../calculation/duration";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 
 const PATTERN = new RegExp(
     `(jetzt|heute|morgen|übermorgen|uebermorgen|gestern|vorgestern|letzte\\s*nacht)` +
@@ -69,6 +70,7 @@ export default class DECasualDateParser extends AbstractParserWithWordBoundaryCh
 
                     assignSimilarDate(component, targetDate);
                     component.imply("hour", 0);
+                    component.addTag(IMPLIED_TIME_OF_DAY_TAG);
                 }
 
                 break;

@@ -2,6 +2,7 @@ import { ParsingContext } from "../../../chrono";
 import { ParsingComponents, ParsingResult } from "../../../results";
 import { Meridiem } from "../../../types";
 import { AbstractParserWithWordBoundaryChecking } from "../../../common/parsers/AbstractParserWithWordBoundary";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 
 export default class FRCasualTimeParser extends AbstractParserWithWordBoundaryChecking {
     innerPattern(context: ParsingContext): RegExp {
@@ -11,6 +12,7 @@ export default class FRCasualTimeParser extends AbstractParserWithWordBoundaryCh
     innerExtract(context: ParsingContext, match: RegExpMatchArray): ParsingComponents | ParsingResult {
         const suffixLower = match[2].toLowerCase();
         const component = context.createParsingComponents();
+        component.addTag(IMPLIED_TIME_OF_DAY_TAG);
 
         switch (suffixLower) {
             case "après-midi":

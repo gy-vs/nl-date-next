@@ -1,6 +1,7 @@
 import { Parser, ParsingContext } from "../../../chrono";
 import { Meridiem } from "../../../types";
 import * as references from "../../../common/casualReferences";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 
 const PATTERN = /今日|きょう|本日|ほんじつ|昨日|きのう|明日|あした|今夜|こんや|今夕|こんゆう|今晩|こんばん|今朝|けさ/i;
 
@@ -52,9 +53,11 @@ export default class JPCasualDateParser implements Parser {
         if (text == "今夜" || text == "今夕" || text == "今晩") {
             components.imply("hour", 22);
             components.assign("meridiem", Meridiem.PM);
+            components.addTag(IMPLIED_TIME_OF_DAY_TAG);
         } else if (text.match("今朝")) {
             components.imply("hour", 6);
             components.assign("meridiem", Meridiem.AM);
+            components.addTag(IMPLIED_TIME_OF_DAY_TAG);
         }
 
         const date = context.refDate;

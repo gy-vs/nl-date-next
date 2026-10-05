@@ -4,6 +4,7 @@ import { Meridiem } from "../../../types";
 import { AbstractParserWithWordBoundaryChecking } from "../../../common/parsers/AbstractParserWithWordBoundary";
 import { assignSimilarDate } from "../../../utils/dates";
 import * as references from "../../../common/casualReferences";
+import { IMPLIED_TIME_OF_DAY_TAG } from "../../../utils/tags";
 
 export default class FRCasualDateParser extends AbstractParserWithWordBoundaryChecking {
     innerPattern(context: ParsingContext): RegExp {
@@ -33,11 +34,13 @@ export default class FRCasualDateParser extends AbstractParserWithWordBoundaryCh
                     assignSimilarDate(component, targetDate);
                     component.imply("hour", 22);
                     component.imply("meridiem", Meridiem.PM);
+                    component.addTag(IMPLIED_TIME_OF_DAY_TAG);
                 } else if (lowerText.match(/la\s*veille/)) {
                     const previousDay = new Date(targetDate.getTime());
                     previousDay.setDate(previousDay.getDate() - 1);
                     assignSimilarDate(component, previousDay);
                     component.imply("hour", 0);
+                    component.addTag(IMPLIED_TIME_OF_DAY_TAG);
                 }
         }
 
