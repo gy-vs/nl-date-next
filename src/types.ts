@@ -14,10 +14,32 @@ export interface ParsingOption {
     timezones?: TimezoneAbbrMap;
 
     /**
+     * Default time (hour and minute) to use when the input mentions a date but neither
+     * a clock time nor a day-period word (e.g. "morning", "evening", "noon").
+     *
+     * For example, with `{ hour: 0 }`, "March 5" resolves to March 5 00:00 instead of
+     * the library default (12:00). Results that explicitly mention a time (e.g. "3pm")
+     * or a day period (e.g. "tomorrow morning") are not affected.
+     *
+     * `minute` is optional and defaults to 0.
+     */
+    defaultTime?: DefaultTime;
+
+    /**
      * Internal debug event handler.
      * @internal
      */
     debug?: DebugHandler | DebugConsume;
+}
+
+/**
+ * A default clock time used for date-only results.
+ * `hour` must be an integer between 0 and 23.
+ * `minute` is optional (default 0) and must be an integer between 0 and 59.
+ */
+export interface DefaultTime {
+    hour: number;
+    minute?: number;
 }
 
 /**

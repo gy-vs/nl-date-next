@@ -3,6 +3,7 @@ import { Component, ParsedResult, ParsingOption, ParsingReference } from "./type
 import { AsyncDebugBlock, DebugHandler } from "./debugging";
 import ENDefaultConfiguration from "./locales/en/configuration";
 import { toTimezoneOffset } from "./timezone";
+import { resolveDefaultTime } from "./defaultTime";
 
 /**
  * Chrono configuration.
@@ -155,7 +156,9 @@ export class ParsingContext implements DebugHandler {
     constructor(text: string, refDate?: ParsingReference | Date, option?: ParsingOption) {
         this.text = text;
         this.option = option ?? {};
-        this.reference = ReferenceWithTimezone.fromInput(refDate, this.option.timezones);
+        // Validate the `defaultTime` option upfront (throws on illegal values).
+        const defaultTime = resolveDefaultTime(this.option.defaultTime);
+        this.reference = ReferenceWithTimezone.fromInput(refDate, this.option.timezones, defaultTime);
         this.refDate = this.reference.instant;
     }
 

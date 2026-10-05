@@ -1,7 +1,7 @@
 import { ParsingContext } from "../../../chrono";
 import { ParsingComponents, ParsingResult } from "../../../results";
 import { AbstractParserWithWordBoundaryChecking } from "../../../common/parsers/AbstractParserWithWordBoundary";
-import { assignSimilarDate, implySimilarTime } from "../../../utils/dates";
+import { assignSimilarDate, implyCasualReferenceTime } from "../../../utils/dates";
 import DECasualTimeParser from "./DECasualTimeParser";
 import * as references from "../../../common/casualReferences";
 import { addDuration } from "../../../calculation/duration";
@@ -39,26 +39,26 @@ export default class DECasualDateParser extends AbstractParserWithWordBoundaryCh
             case "morgen":
                 targetDate = addDuration(targetDate, { day: 1 });
                 assignSimilarDate(component, targetDate);
-                implySimilarTime(component, targetDate);
+                implyCasualReferenceTime(component, context.reference);
                 break;
 
             case "übermorgen":
             case "uebermorgen":
                 targetDate = addDuration(targetDate, { day: 2 });
                 assignSimilarDate(component, targetDate);
-                implySimilarTime(component, targetDate);
+                implyCasualReferenceTime(component, context.reference);
                 break;
 
             case "gestern":
                 targetDate = addDuration(targetDate, { day: -1 });
                 assignSimilarDate(component, targetDate);
-                implySimilarTime(component, targetDate);
+                implyCasualReferenceTime(component, context.reference);
                 break;
 
             case "vorgestern":
                 targetDate = addDuration(targetDate, { day: -2 });
                 assignSimilarDate(component, targetDate);
-                implySimilarTime(component, targetDate);
+                implyCasualReferenceTime(component, context.reference);
                 break;
 
             default:

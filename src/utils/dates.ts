@@ -1,3 +1,4 @@
+import type { ReferenceWithTimezone } from "../results";
 import { ParsingComponents } from "../results";
 import { Meridiem } from "../types";
 
@@ -47,4 +48,24 @@ export function implySimilarTime(component: ParsingComponents, target: Date) {
     component.imply("second", target.getSeconds());
     component.imply("millisecond", target.getMilliseconds());
     component.imply("meridiem", target.getHours() < 12 ? Meridiem.AM : Meridiem.PM);
+}
+
+/**
+ * Imply the clock time for a date-only casual reference (e.g. "today", "tomorrow").
+ *
+ * Historically these imply the reference's own time; when the caller customized
+ * `defaultTime`, the reference's default time is used instead so date-only inputs
+ * land on the configured hour/minute.
+ * @param component the component to be updated.
+ * @param reference the parse reference.
+ */
+export function implyCasualReferenceTime(component: ParsingComponents, reference: ReferenceWithTimezone) {
+    if (reference.defaultTime.customized) {
+        component.imply("hour", reference.defaultTime.hour);
+        component.imply("minute", reference.defaultTime.minute);
+        component.imply("second", 0);
+        component.imply("millisecond", 0);
+        return;
+    }
+    implySimilarTime(component, reference.getDateWithAdjustedTimezone());
 }

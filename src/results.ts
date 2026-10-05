@@ -2,31 +2,42 @@ import { Component, ParsedComponents, ParsedResult, ParsingReference, TimezoneAb
 
 import quarterOfYear from "dayjs/plugin/quarterOfYear";
 import dayjs, { QUnitType } from "dayjs";
-import { assignSimilarDate, assignSimilarTime, implySimilarTime } from "./utils/dates";
+import { assignSimilarDate, assignSimilarTime, implyCasualReferenceTime } from "./utils/dates";
 import { toTimezoneOffset } from "./timezone";
 import { addDuration, Duration, EmptyDuration } from "./calculation/duration";
+import { LIBRARY_DEFAULT_TIME, ResolvedDefaultTime } from "./defaultTime";
 dayjs.extend(quarterOfYear);
 
 export class ReferenceWithTimezone {
     readonly instant: Date;
     readonly timezoneOffset?: number | null;
+    /**
+     * The default clock time implied on date-only results for this parse.
+     * Defaults to 12:00 when the caller did not set the `defaultTime` option.
+     */
+    readonly defaultTime: ResolvedDefaultTime;
 
-    constructor(instant?: Date, timezoneOffset?: number) {
+    constructor(instant?: Date, timezoneOffset?: number, defaultTime?: ResolvedDefaultTime) {
         this.instant = instant ?? new Date();
         this.timezoneOffset = timezoneOffset ?? null;
+        this.defaultTime = defaultTime ?? LIBRARY_DEFAULT_TIME;
     }
 
-    static fromDate(date: Date): ReferenceWithTimezone {
-        return new ReferenceWithTimezone(date);
+    static fromDate(date: Date, defaultTime?: ResolvedDefaultTime): ReferenceWithTimezone {
+        return new ReferenceWithTimezone(date, undefined, defaultTime);
     }
 
-    static fromInput(input?: ParsingReference | Date, timezoneOverrides?: TimezoneAbbrMap) {
+    static fromInput(
+        input?: ParsingReference | Date,
+        timezoneOverrides?: TimezoneAbbrMap,
+        defaultTime?: ResolvedDefaultTime
+    ) {
         if (input instanceof Date) {
-            return ReferenceWithTimezone.fromDate(input);
+            return ReferenceWithTimezone.fromDate(input, defaultTime);
         }
         const instant: Date = input?.instant ?? new Date();
         const timezoneOffset = toTimezoneOffset(input?.timezone, instant, timezoneOverrides);
-        return new ReferenceWithTimezone(instant, timezoneOffset);
+        return new ReferenceWithTimezone(instant, timezoneOffset, defaultTime);
     }
 
     /**
@@ -83,8 +94,8 @@ export class ParsingComponents implements ParsedComponents {
         this.imply("day", date.getDate());
         this.imply("month", date.getMonth() + 1);
         this.imply("year", date.getFullYear());
-        this.imply("hour", 12);
-        this.imply("minute", 0);
+        this.imply("hour", reference.defaultTime.hour);
+        this.imply("minute", reference.defaultTime.minute);
         this.imply("second", 0);
         this.imply("millisecond", 0);
     }
@@ -103,7 +114,9 @@ export class ParsingComponents implements ParsedComponents {
             assignSimilarDate(components, date);
             components.assign("timezoneOffset", reference.getTimezoneOffset());
         } else {
-            implySimilarTime(components, date);
+            // Date-only relative duration (day/week/month/year): the result is a date.
+            // Its time is the reference's time by default, or the configured defaultTime.
+            implyCasualReferenceTime(components, reference);
             components.imply("timezoneOffset", reference.getTimezoneOffset());
 
             if ("day" in duration) {

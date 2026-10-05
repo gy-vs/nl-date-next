@@ -1,5 +1,5 @@
 import { ParsingComponents, ReferenceWithTimezone } from "../results";
-import { assignSimilarDate, assignSimilarTime, implySimilarTime } from "../utils/dates";
+import { assignSimilarDate, assignSimilarTime, implyCasualReferenceTime } from "../utils/dates";
 import { Meridiem } from "../types";
 
 export function now(reference: ReferenceWithTimezone): ParsingComponents {
@@ -16,7 +16,7 @@ export function today(reference: ReferenceWithTimezone): ParsingComponents {
     const targetDate = reference.getDateWithAdjustedTimezone();
     const component = new ParsingComponents(reference, {});
     assignSimilarDate(component, targetDate);
-    implySimilarTime(component, targetDate);
+    implyCasualReferenceTime(component, reference);
     component.delete("meridiem");
     component.addTag("casualReference/today");
     return component;
@@ -47,7 +47,7 @@ export function theDayAfter(reference: ReferenceWithTimezone, nDays: number): Pa
     newDate.setDate(newDate.getDate() + nDays);
 
     assignSimilarDate(component, newDate);
-    implySimilarTime(component, newDate);
+    implyCasualReferenceTime(component, reference);
     component.delete("meridiem");
     return component;
 }

@@ -1,7 +1,7 @@
 import { ParsingContext } from "../../../chrono";
 import { ParsingComponents, ParsingResult } from "../../../results";
 import { AbstractParserWithWordBoundaryChecking } from "../../../common/parsers/AbstractParserWithWordBoundary";
-import { assignSimilarDate, implySimilarTime } from "../../../utils/dates";
+import { assignSimilarDate, implyCasualReferenceTime } from "../../../utils/dates";
 import * as references from "../../../common/casualReferences";
 
 const PATTERN = new RegExp(
@@ -39,14 +39,14 @@ export default class SVCasualDateParser extends AbstractParserWithWordBoundaryCh
                 const nextDay = new Date(targetDate.getTime());
                 nextDay.setDate(nextDay.getDate() + 1);
                 assignSimilarDate(component, nextDay);
-                implySimilarTime(component, nextDay);
+                implyCasualReferenceTime(component, context.reference);
                 break;
 
             case "igår":
                 const previousDay = new Date(targetDate.getTime());
                 previousDay.setDate(previousDay.getDate() - 1);
                 assignSimilarDate(component, previousDay);
-                implySimilarTime(component, previousDay);
+                implyCasualReferenceTime(component, context.reference);
                 break;
 
             case "förrgår":
@@ -54,7 +54,7 @@ export default class SVCasualDateParser extends AbstractParserWithWordBoundaryCh
                 const twoDaysAgo = new Date(targetDate.getTime());
                 twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
                 assignSimilarDate(component, twoDaysAgo);
-                implySimilarTime(component, twoDaysAgo);
+                implyCasualReferenceTime(component, context.reference);
                 break;
         }
 

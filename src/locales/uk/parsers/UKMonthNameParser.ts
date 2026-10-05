@@ -45,7 +45,7 @@ export default class UkMonthNameParser extends AbstractParserWithLeftBoundaryChe
             const year = parseYearPattern(match[YEAR_GROUP]);
             result.start.assign("year", year);
         } else {
-            const year = findYearClosestToRef(context.reference.instant, 1, month);
+            const year = findYearClosestToRef(context.reference.instant, 1, month, context.reference.defaultTime);
             result.start.imply("year", year);
         }
 

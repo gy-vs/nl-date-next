@@ -41,7 +41,7 @@ export default class NLMonthNameParser extends AbstractParserWithWordBoundaryChe
             const year = parseYear(match[YEAR_GROUP]);
             components.assign("year", year);
         } else {
-            const year = findYearClosestToRef(context.refDate, 1, month);
+            const year = findYearClosestToRef(context.refDate, 1, month, context.reference.defaultTime);
             components.imply("year", year);
         }
 

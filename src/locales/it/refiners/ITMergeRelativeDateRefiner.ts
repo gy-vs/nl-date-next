@@ -44,7 +44,7 @@ export default class ENMergeRelativeDateRefiner extends MergingRefiner {
         }
 
         const components = ParsingComponents.createRelativeFromReference(
-            ReferenceWithTimezone.fromDate(nextResult.start.date()),
+            ReferenceWithTimezone.fromDate(nextResult.start.date(), nextResult.reference.defaultTime),
             timeUnits
         );
 
